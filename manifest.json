@@ -5,7 +5,8 @@
     "description": "Watch for a specific button and click it automatically",
     "permissions": [
         "scripting",
-        "activeTab"
+        "activeTab",
+        "storage"
     ],
     "content_scripts": [
         {
@@ -18,5 +19,8 @@
             "run_at": "document_idle",
             "all_frames": true
         }
-    ]
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
 }
