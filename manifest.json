@@ -4,14 +4,12 @@
     "version": "1.0",
     "description": "Watch for a specific button and click it automatically",
     "permissions": [
-        "scripting",
-        "activeTab",
         "storage"
     ],
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "https://yeardream2025.elice.io/*"
             ],
             "js": [
                 "content.js"
