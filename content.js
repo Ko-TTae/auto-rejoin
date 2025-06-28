@@ -4,7 +4,8 @@
 
   // iframe 내부 버튼 찾기 유틸
   function getIframeDoc() {
-    const aside = document.getElementById('elice-community-app');
+    const pageRoot = window.top.document;
+    const aside = pageRoot.getElementById('elice-community-app');
     if (!aside) {
       return null;
     }
@@ -52,7 +53,6 @@
       console.log('이미 수동입장 리스너가 등록되어 있습니다.');
       return;
     }
-    console.log('수동입장 리스너 등록 시도');
     registrationInProgress = true; // 등록 시도 중 플래그 설정
 
     const doc = getIframeDoc();
@@ -76,8 +76,6 @@
           registrationInProgress = false; // 등록 시도 플래그도 초기화
         };
         joinButton.addEventListener('click', handler);
-        console.log('수동입장 리스너 등록 완료!');
-        manualListenerRegistered = true; // 등록 성공 시에만 플래그 설정
         return true;
       }
       return false;
@@ -88,6 +86,8 @@
       console.log('입장하기 버튼을 찾지 못함, 1초마다 재시도...');
       const intervalId = setInterval(() => {
         if (findAndSetupJoinButton()) {
+          console.log('입장하기 버튼을 찾았고, 리스너를 등록했습니다.');
+          manualListenerRegistered = true; // 등록 성공 시에만 플래그 설정
           clearInterval(intervalId);
         }
       }, 1000);
@@ -120,7 +120,6 @@
         // 모든 동작 후 dataset._autoClicked 속성을 초기화
         setTimeout(() => {
           elList.forEach((el) => {
-            console.log(`${el}`);
             el.dataset._autoClicked = '';
             delete el.dataset._autoClicked;
           });
@@ -130,18 +129,26 @@
     }
   }
 
+  chrome.storage.local.get('autoJoinEnabled', (data) => {
+    if (data.autoJoinEnabled == false) {
+      // 자동 입장 기능 비활성화 → 리스너 등록
+      if (!manualListenerRegistered && !registrationInProgress) {
+        addManualJoinListener();
+      }
+    }
+  });
+
   // 매 0.5초마다 반복 실행
   setInterval(() => {
-    chrome.storage.local.get('autoJoinEnabled', (data) => {
-      if (data.autoJoinEnabled !== false) {
-        start();
-      } else {
-        // 자동 입장 기능 비활성화 → 리스너 등록
-        if (!manualListenerRegistered && !registrationInProgress) {
-          addManualJoinListener();
+    try {
+      chrome.storage.local.get('autoJoinEnabled', (data) => {
+        if (data.autoJoinEnabled !== false) {
+          start();
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error('자동 입장 기능 실행 중 오류:', error);
+    }
   }, 500);
 
   // 화면이 업데이트 될 때마다 observeExitButton 실행
