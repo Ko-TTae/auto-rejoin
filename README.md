@@ -2,6 +2,8 @@
 
 강사님이 중요한 말 할 때 튕기는걸 3연속으로 당해, 기분이 몹시 서운해져서 만든 크롬 확장 프로그램
 
+[크롬 웹 스토어 바로가기](https://chromewebstore.google.com/detail/auto-click-button/kpacbffelakjndjdnopnepgcelbfdcfj?authuser=0&hl=ko)
+
 ## 기본 동작
 
 1. 주기적으로(매 0.5초) '라이브 강의실 참여하기' 버튼이 생기는지 추적
